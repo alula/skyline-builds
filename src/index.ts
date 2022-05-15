@@ -103,8 +103,6 @@ interface RunMetadata {
 			console.error(e);
 		}
 
-		return;
-
 		const resp = await octokit.rest.actions.listWorkflowRunsForRepo({
 			owner,
 			repo,
@@ -128,7 +126,7 @@ interface RunMetadata {
 		}
 	}
 
-	setInterval(fetchArtifacts, 60000);
+	setInterval(fetchArtifacts, 90000);
 	fetchArtifacts();
 
 	const app = express();
