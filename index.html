@@ -24,6 +24,8 @@
                     <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
+            <div class="mt-3 text-center" id="status">
+            </div>
         </div>
     </div>
 
@@ -31,7 +33,6 @@
 
 
         (async () => {
-
             function escapeHtml(unsafe) {
                 return unsafe
                     .replace(/&/g, "&amp;")
@@ -42,33 +43,54 @@
             }
 
             const buildsDiv = document.getElementById('builds');
+            const statusDiv = document.getElementById('status');
 
-            const response = await fetch('/builds');
-            const builds = await response.json();
+            function renderBuilds(builds) {
+                buildsDiv.innerHTML = '';
 
-            buildsDiv.innerHTML = '';
+                for (const build of builds) {
+                    let message = build.commit.message;
+                    message = message.split('\n')[0];
 
-            for (const build of builds) {
-                let message = build.commit.message;
-                message = message.split('\n')[0];
+                    const buildDiv = document.createElement('div');
+                    buildDiv.className = 'card mb-3';
+                    buildDiv.innerHTML = `
+                        <div class="card-header">
+                            <h5 class="card-title">#${build.runNumber} - ${escapeHtml(message)}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <b>Branch: </b><code>${build.branch}</code><br/>
+                                <b>Commit hash: </b><code>${build.commit.id}</code><br/>
+                                <b>Run ID: </b>${build.id}
+                            </p>
+                            <a href="/cache/${build.id}/app-release.apk" class="btn btn-success" target="_blank">Download app-release.apk</a>
+                            <a href="https://github.com/skyline-emu/skyline/commit/${build.commit.id}" class="btn btn-dark">View on GitHub</a>
+                        </div>
+                    `;
+                    buildsDiv.appendChild(buildDiv);
+                }
+            }
 
-                const buildDiv = document.createElement('div');
-                buildDiv.className = 'card mb-3';
-                buildDiv.innerHTML = `
-                    <div class="card-header">
-                        <h5 class="card-title">#${build.runNumber} - ${escapeHtml(message)}</h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">
-                            <b>Branch: </b><code>${build.branch}</code><br/>
-                            <b>Commit hash: </b><code>${build.commit.id}</code><br/>
-                            <b>Run ID: </b>${build.id}
-                        </p>
-                        <a href="/cache/${build.id}/app-release.apk" class="btn btn-success" target="_blank">Download app-release.apk</a>
-                        <a href="https://github.com/skyline-emu/skyline/commit/${build.commit.id}" class="btn btn-dark">View on GitHub</a>
-                    </div>
-                `;
-                buildsDiv.appendChild(buildDiv);
+            const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+            for (; ;) {
+                try {
+                    const response = await fetch('/builds');
+                    const builds = await response.json();
+                    // const builds = [];
+
+                    if (builds.length !== 0) {
+                        renderBuilds(builds);
+                        break;
+                    } else {
+                        statusDiv.innerHTML = "Please wait, the builds are still being processed.<br/>The page will automatically refresh.";
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+
+                await sleep(5000);
             }
         })();
     </script>

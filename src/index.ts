@@ -83,12 +83,10 @@ interface RunMetadata {
 
 	async function refresh() {
 		try {
-			let i = 0;
-			const newCache: RunMetadata[] = [];
+			let newCache: RunMetadata[] = [];
 
 			const list = await fs.readdir("./cache", { withFileTypes: true });
 			for (const file of list) {
-				if (i++ === 20) break;
 				if (!file.isDirectory()) continue;
 				if (!existsSync(`./cache/${file.name}/metadata.json`)) continue;
 				if (!existsSync(`./cache/${file.name}/app-release.apk`)) continue;
@@ -99,6 +97,8 @@ interface RunMetadata {
 
 			// sort by run number, decreasing
 			newCache.sort((a, b) => b.runNumber - a.runNumber);
+			newCache = newCache.slice(0, 20);
+
 			console.log(newCache);
 			metadataCache = newCache;
 		} catch (e) {
@@ -119,7 +119,7 @@ interface RunMetadata {
 				run.head_repository.owner.login === owner &&
 				run.status === "completed"
 		);
-		
+
 		for (const run of runs) {
 			await downloadArtifact({
 				id: run.id,
