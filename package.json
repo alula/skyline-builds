@@ -1,0 +1,30 @@
+{
+  "name": "skyline-builds",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Alula",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon --ignore cache src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "jszip": "^3.9.1",
+    "octokit": "^1.7.1",
+    "timed-memoize": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.2",
+    "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/node": "^17.0.23",
+    "@types/node-telegram-bot-api": "^0.56.0",
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.2"
+  }
+}
