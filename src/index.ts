@@ -83,10 +83,12 @@ interface RunMetadata {
 
 	async function fetchArtifacts() {
 		try {
+			let i = 0;
 			const newCache: RunMetadata[] = [];
 
 			const list = await fs.readdir("./cache", { withFileTypes: true });
 			for (const file of list) {
+				if (i++ === 20) break;
 				if (!file.isDirectory()) continue;
 				if (!existsSync(`./cache/${file.name}/metadata.json`)) continue;
 				if (!existsSync(`./cache/${file.name}/app-release.apk`)) continue;
