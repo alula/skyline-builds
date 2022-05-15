@@ -81,7 +81,7 @@ interface RunMetadata {
 		}
 	}
 
-	async function fetchArtifacts() {
+	async function refresh() {
 		try {
 			let i = 0;
 			const newCache: RunMetadata[] = [];
@@ -104,6 +104,10 @@ interface RunMetadata {
 		} catch (e) {
 			console.error(e);
 		}
+	}
+
+	async function fetchArtifacts() {
+		await refresh();
 
 		const resp = await octokit.rest.actions.listWorkflowRunsForRepo({
 			owner,
@@ -115,6 +119,7 @@ interface RunMetadata {
 				run.head_repository.owner.login === owner &&
 				run.status === "completed"
 		);
+		
 		for (const run of runs) {
 			await downloadArtifact({
 				id: run.id,
@@ -126,6 +131,8 @@ interface RunMetadata {
 				runNumber: run.run_number,
 			});
 		}
+
+		await refresh();
 	}
 
 	setInterval(fetchArtifacts, 90000);
