@@ -18,6 +18,7 @@ interface RunMetadata {
 		message: string;
 	};
 	runNumber: number;
+	createdAt: string;
 }
 
 (async () => {
@@ -99,7 +100,7 @@ interface RunMetadata {
 			newCache.sort((a, b) => b.runNumber - a.runNumber);
 			newCache = newCache.slice(0, 20);
 
-			console.log(newCache);
+			// console.log(newCache);
 			metadataCache = newCache;
 		} catch (e) {
 			console.error(e);
@@ -129,6 +130,7 @@ interface RunMetadata {
 					message: run.head_commit?.message || "",
 				},
 				runNumber: run.run_number,
+				createdAt: run.created_at,
 			});
 		}
 
