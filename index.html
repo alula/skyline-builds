@@ -6,6 +6,7 @@
     <meta name="viewport"
         content="width=device-width, shrink-to-fit=no, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="/static/bootstrap.min.css" />
+    <link rel="stylesheet" href="/static/dark-mode.css" />
     <title>Skyline builds</title>
 
 </head>
@@ -62,10 +63,10 @@
                             <p class="card-text">
                                 <b>Branch: </b><code>${build.branch}</code><br/>
                                 <b>Commit hash: </b><code>${build.commit.id}</code><br/>
-                                <b>Run ID: </b>${build.id}
-                                <b>Build at: </b>${build.createdAt}
+                                <b>Run ID: </b>${build.id}<br/>
+                                <b>Built at: </b>${build.createdAt}
                             </p>
-                            <a href="/cache/${build.id}/app-release.apk" class="btn btn-success" target="_blank">Download app-release.apk</a>
+                            <a href="/cache/${build.id}/${build.apkName}" class="btn btn-success" target="_blank">Download ${build.apkName}</a>
                             <a href="https://github.com/skyline-emu/skyline/commit/${build.commit.id}" class="btn btn-dark">View on GitHub</a>
                         </div>
                     `;

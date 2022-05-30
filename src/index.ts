@@ -19,6 +19,7 @@ interface RunMetadata {
 	};
 	runNumber: number;
 	createdAt: string;
+	apkName: string;
 }
 
 (async () => {
@@ -52,6 +53,12 @@ interface RunMetadata {
 
 			// console.log(resp2.data.artifacts);
 
+			const apkName = resp2.data.artifacts.find((a) => a.name.includes("-release.apk"));
+
+			if (!apkName) {
+				throw new Error("No apk found");
+			}
+
 			const download = async (name: string) => {
 				const art = resp2.data.artifacts.find((a) => a.name === name);
 				if (!art) {
@@ -73,7 +80,8 @@ interface RunMetadata {
 				await fs.writeFile(`./cache/${runId}/${name}`, data);
 			};
 
-			await download("app-release.apk");
+			metadata.apkName = apkName.name;
+			await download(metadata.apkName);
 			await fs.writeFile(`./cache/${runId}/metadata.json`, JSON.stringify(metadata));
 		} catch (e) {
 			console.error(e);
@@ -90,7 +98,7 @@ interface RunMetadata {
 			for (const file of list) {
 				if (!file.isDirectory()) continue;
 				if (!existsSync(`./cache/${file.name}/metadata.json`)) continue;
-				if (!existsSync(`./cache/${file.name}/app-release.apk`)) continue;
+				// if (!existsSync(`./cache/${file.name}/app-release.apk`)) continue;
 
 				const meta = JSON.parse(await fs.readFile(`./cache/${file.name}/metadata.json`, "utf8")) as RunMetadata;
 				newCache.push(meta);
@@ -131,6 +139,7 @@ interface RunMetadata {
 				},
 				runNumber: run.run_number,
 				createdAt: run.created_at,
+				apkName: "app-release.apk",
 			});
 		}
 

@@ -6,7 +6,7 @@
   "author": "Alula",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon --ignore cache src/index.ts",
+    "dev": "nodemon --ignore cache --ignore 'cache/*' src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js"
   },
