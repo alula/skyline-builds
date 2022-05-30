@@ -30,37 +30,36 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.16/marked.min.js" integrity="sha256-/SDjPL/36EsO4f76Gav6OW02Q5GUSLYYMBO3txrwnXI=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@2.3.8/dist/purify.min.js" integrity="sha256-1I48MrpceVZ/OZAxRwNegD2l/FD/Acfat73p/LuZGdE=" crossorigin="anonymous"></script>
     <script>
-
-
         (async () => {
-            function escapeHtml(unsafe) {
-                return unsafe
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&#039;");
-            }
-
             const buildsDiv = document.getElementById('builds');
             const statusDiv = document.getElementById('status');
+
+            function splitMax(string, separator, max) {
+                const arr = string.split(separator);
+                const result = arr.splice(0, max);
+                result.push(arr.join(' '));
+                return result;
+            }
 
             function renderBuilds(builds) {
                 buildsDiv.innerHTML = '';
 
                 for (const build of builds) {
-                    let message = build.commit.message;
-                    message = message.split('\n')[0];
+                    console.log(build.commit.message);
+                    const [message, description] = splitMax(build.commit.message, '\n', 1);
 
                     const buildDiv = document.createElement('div');
                     buildDiv.className = 'card mb-3';
                     buildDiv.innerHTML = `
                         <div class="card-header">
-                            <h5 class="card-title">#${build.runNumber} - ${escapeHtml(message)}</h5>
+                            <h5 class="card-title">#${build.runNumber} - ${marked.parseInline(DOMPurify.sanitize(message))}</h5>
                         </div>
                         <div class="card-body">
                             <p class="card-text">
+                                ${marked.parseInline(DOMPurify.sanitize(description.trim()))}<br/><br/>
                                 <b>Branch: </b><code>${build.branch}</code><br/>
                                 <b>Commit hash: </b><code>${build.commit.id}</code><br/>
                                 <b>Run ID: </b>${build.id}<br/>
