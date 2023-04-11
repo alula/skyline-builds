@@ -32,6 +32,7 @@ interface RunMetadata {
 	let metadataCache: RunMetadata[] = [];
 
 	async function downloadArtifact(metadata: RunMetadata) {
+		if (metadata.branch === "translations") return;
 		const runId = metadata.id;
 		if (downloadLocks.has(runId)) return;
 
